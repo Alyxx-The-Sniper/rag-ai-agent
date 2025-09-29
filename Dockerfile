@@ -5,11 +5,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install deps from pyproject/uv.lock if present
+# 1) Export deps WITHOUT HASHES to avoid cross-platform hash failures
 COPY pyproject.toml uv.lock* ./
 RUN pip install --no-cache-dir uv \
- && (uv export --format=requirements-txt --quiet > /tmp/requirements.txt || true) \
+ && (uv export --format=requirements-txt --no-hashes --quiet > /tmp/requirements.txt || true) \
  && pip install --no-cache-dir -r /tmp/requirements.txt
+
+# 2) (Optional but recommended) Install CPU-only PyTorch if you use torch
+#    Comment out if you don't use torch.
+#    This avoids pulling nvidia-cuda* packages.
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu \
+    torch torchvision torchaudio || true
 
 # App code
 COPY . .
