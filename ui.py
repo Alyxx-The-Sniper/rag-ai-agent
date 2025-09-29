@@ -218,7 +218,7 @@ if page == "Ingest Data":
 # 2. CHAT PAGE (markdown sidebar; replace/clear each turn for real)
 # ==================================================================================
 elif page == "Chat with AI":
-    st.title("🤖 Chat with your RAG Agent")
+    st.title("🤖 Chat with your PDF file")
     st.markdown(
     "Note: I have already ingested a PDF file; please refer to it when asking questions: "
     "[Philippines flood-control corruption article](https://medium.com/@kaikuh/philippines-flood-control-corruption-3e3ce980dfa0)."
