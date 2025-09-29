@@ -18,6 +18,26 @@ st.set_page_config(
     layout="wide"
 )
 
+### Background
+# ⬇️ Add these ~6 lines
+# bg = 'https://plus.unsplash.com/premium_vector-1744953414546-12f23070c3d9?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+bg = 'https://images.unsplash.com/photo-1699527381287-06ac070da534?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+st.markdown(
+    f"""
+    <style>
+      .stApp {{
+        background: url('{bg}') no-repeat center center fixed;
+        background-size: cover;
+      }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+
+
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Ingest Data", "Chat with AI"])
@@ -160,10 +180,10 @@ def call_ask_api(query: str, thread_id: str):
 # ==================================================================================
 if page == "Ingest Data":
     st.title("📄 PDF Ingestion")
-    st.markdown("Upload a PDF file to process and add it to the knowledge base.")
+    st.markdown("Upload a PDF file to process and add it to the vector dense and sparse + knowledge database.")
 
     with st.form("ingest_form", clear_on_submit=True):
-        password = st.text_input("Password", type="password")
+        password = st.text_input("Password (I need to secure the ingest file with a password for my own safety and to prevent abusive use —sorry for the inconvenience 🥰", type="password")
         uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
         enable_graph = st.checkbox("Enable Knowledge Graph Upsert", value=True)
         namespace = st.text_input("Namespace", value="default_namespace_1")
@@ -199,8 +219,11 @@ if page == "Ingest Data":
 # ==================================================================================
 elif page == "Chat with AI":
     st.title("🤖 Chat with your RAG Agent")
-    st.markdown("Ask questions about the documents you've ingested.")
-
+    st.markdown(
+    "Note: I have already ingested a PDF file; please refer to it when asking questions: "
+    "[Philippines flood-control corruption article](https://medium.com/@kaikuh/philippines-flood-control-corruption-3e3ce980dfa0)."
+)
+    
     # Init & render sidebar first so it reflects the current state
     init_state()
     render_sidebar_tool_results()
