@@ -16,7 +16,7 @@ dependencies = [
     "langchain-openai>=0.3.29",
     "langgraph>=0.6.4",
     "markdown>=3.8.2",
-    "marker-pdf>=1.8.4",
+#    "marker-pdf>=1.8.4",
     "openai>=1.99.9",
     "packaging>=24.2",
     "pinecone>=7.3.0",
@@ -26,3 +26,5 @@ dependencies = [
     "streamlit>=1.48.0",
     "typing-extensions>=4.14.1",
 ]
+
+[project.optional-dependencies] ingest = ["marker-pdf>=1.8.4"] # I disable Marker because it consumes too much RAM when incorporated with WEB Service
