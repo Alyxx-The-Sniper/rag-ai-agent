@@ -14,8 +14,8 @@ from typing import List, Dict, Optional
 from pathlib import Path
 
 ###################################################################################
-# initialize once
-_PDF_CONVERTER = PdfConverter(artifact_dict=create_model_dict())
+# initialize once (uncomment for marker enabled)
+# _PDF_CONVERTER = PdfConverter(artifact_dict=create_model_dict())
 
 # helper 
 def marker_parse(pdf_path: str) -> str:
