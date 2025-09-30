@@ -27,9 +27,12 @@ from langchain.tools import tool
 # # 4.  **If the tools do not return relevant information**, state that you could not find an answer in the provided documents and do not add any information.
 # # # """
 
+
 # For Testing Tools 
-system_prompt ='Strictly use both build_pinecone_retriever and fetch_facts_for_question tools to retrieve information then answer the question base on that retrieved information.'
-# system_prompt = 'Strictly use the fetch_facts_for_question tools to answer the query'
+# system_prompt ='Strictly use both build_pinecone_retriever and fetch_facts_for_question tools to retrieve information then answer the question base on that retrieved information.'
+
+system_prompt = '''For each question: (1) call build_pinecone_retriever with the user query; (2) call fetch_facts_for_question with the same query. Do not produce the final answer until both tool results are available in this conversation. If either tool returns empty or errors, say so and ask for a refined query.'''
+
 
 #####################################################################################
 # Tools setup
