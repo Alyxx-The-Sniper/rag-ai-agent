@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from agent import get_agent_runnable
 from langchain_core.messages import HumanMessage
 from typing import List, Any, Dict
-from fastapi import HTTPException
 
 
 app = FastAPI(title="RAG Ingest API")
@@ -23,7 +22,53 @@ app.add_middleware(
     allow_headers=["*"],)
 
 ################################################################################################################
-# 1. INGEST
+# # 1. INGEST (with marker enabled)
+# @app.post("/ingest")
+# async def run_ingest(
+#     file: UploadFile = File(...),
+#     enable_graph: bool = Form(True),
+#     namespace: str = Form("default_namespace_1"),
+# ):
+#     """
+#     Save the uploaded PDF into TMP_DIR, parse to Markdown in TMP_DIR, then index.
+#     """
+#     upload_id = str(uuid4())
+#     safe_stem = Path(file.filename).stem
+#     pdf_path = DATA_DIR / f"{safe_stem}_{upload_id}.pdf"
+
+#     try:
+#         data = await file.read()
+#         pdf_path.write_bytes(data)
+
+#         # Parse directly into TMP_DIR so .md lives there
+#         parsed = parse_single_pdf_to_md(pdf_path, TMP_DIR)
+#         docs = load_markdown_to_documents(parsed)
+#         chunks = chunk_documents(docs)
+
+#         index = get_pinecone_index()
+#         create_and_upsert_vectors(index, chunks)
+
+#         kg = {"enabled": False}
+#         if enable_graph:
+#             kg = upsert_knowledge_graph_from_chunks(chunks, llm=llm_gen)
+
+#         return {
+#             "doc_count": len(docs),
+#             "chunk_count": len(chunks),
+#             "namespace": namespace,
+#             "parsed_saved_dir": str(TMP_DIR),
+#             "parsed_files": [str(p) for p in parsed],
+#             "kg": kg,
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+################################################################################################################
+#
+# Note: This ingest endpoint run but marker isnt install so i will return error when hit ingest
+DATA_DIR = Path("/app/data")
+TMP_DIR = Path("/app/tmp")
+TMP_DIR.mkdir(parents=True, exist_ok=True)
+
 @app.post("/ingest")
 async def run_ingest(
     file: UploadFile = File(...),
@@ -33,6 +78,19 @@ async def run_ingest(
     """
     Save the uploaded PDF into TMP_DIR, parse to Markdown in TMP_DIR, then index.
     """
+    # Import only when endpoint is called (so marker-pdf can be absent online)
+    try:
+        from data_process import (
+            parse_single_pdf_to_md,
+            load_markdown_to_documents,
+            chunk_documents,
+        )
+        from vectors import get_pinecone_index, create_and_upsert_vectors
+        from kg import upsert_knowledge_graph_from_chunks, llm_gen  # adjust paths/names as in your repo
+    except Exception:
+        # marker-pdf or other ingest deps not installed in this deployment
+        raise HTTPException(status_code=403, detail="Online ingest is disabled in this demo.")
+
     upload_id = str(uuid4())
     safe_stem = Path(file.filename).stem
     pdf_path = DATA_DIR / f"{safe_stem}_{upload_id}.pdf"
@@ -47,7 +105,7 @@ async def run_ingest(
         chunks = chunk_documents(docs)
 
         index = get_pinecone_index()
-        create_and_upsert_vectors(index, chunks)
+        create_and_upsert_vectors(index, chunks, namespace=namespace)
 
         kg = {"enabled": False}
         if enable_graph:
@@ -61,9 +119,10 @@ async def run_ingest(
             "parsed_files": [str(p) for p in parsed],
             "kg": kg,
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
 
 
 ################################################################################################################
