@@ -1,6 +1,6 @@
 # api/main.py
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from config import DATA_DIR, TMP_DIR
 from data_process import parse_single_pdf_to_md, load_markdown_to_documents, chunk_documents
 from ingest import get_pinecone_index, create_and_upsert_vectors, upsert_knowledge_graph_from_chunks
@@ -9,10 +9,9 @@ from pathlib import Path
 from config import llm_gen
 from fastapi.middleware.cors import CORSMiddleware
 from agent import get_agent_runnable
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage, BaseMessage
-from typing import List, Any, Dict, Tuple, Optional,  Union
-import uuid
-
+from langchain_core.messages import HumanMessage
+from typing import List, Any, Dict
+from fastapi import HTTPException
 
 
 app = FastAPI(title="RAG Ingest API")
