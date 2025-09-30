@@ -89,7 +89,7 @@ async def run_ingest(
         from kg import upsert_knowledge_graph_from_chunks, llm_gen  # adjust paths/names as in your repo
     except Exception:
         # marker-pdf or other ingest deps not installed in this deployment
-        raise HTTPException(status_code=403, detail="Online ingest is disabled in this demo.")
+        raise HTTPException(status_code=403, detail="Online ingest is disabled in this demo (No Marker Installed).")
 
     upload_id = str(uuid4())
     safe_stem = Path(file.filename).stem
