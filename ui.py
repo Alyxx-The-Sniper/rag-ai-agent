@@ -183,7 +183,7 @@ if page == "Ingest Data":
     st.markdown("Upload a PDF file to process and add it to the vector dense and sparse + knowledge database.")
 
     with st.form("ingest_form", clear_on_submit=True):
-        password = st.text_input("Password (I need to secure the ingest file with a password for my own safety and to prevent abusive use —sorry for the inconvenience 🥰", type="password")
+        password = st.text_input("Password (I need to secure the ingest button with a password for my own safety and to prevent abusive use —sorry for the inconvenience 🥰", type="password")
         uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
         enable_graph = st.checkbox("Enable Knowledge Graph Upsert", value=True)
         namespace = st.text_input("Namespace", value="default_namespace_1")
